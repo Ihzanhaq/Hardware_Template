@@ -1,0 +1,200 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode: toggled via `.dark` on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Core neutrals */
+  --color-ink: #0e1116;
+  --color-cream: #f5f6f8;
+
+  /* Brand palette — safety amber / industrial orange */
+  --color-brand-50: #fff8ed;
+  --color-brand-100: #ffefd4;
+  --color-brand-200: #ffdba8;
+  --color-brand-300: #ffc071;
+  --color-brand-400: #ff9d38;
+  --color-brand-500: #fb8112;
+  --color-brand-600: #ec6608;
+  --color-brand-700: #c44d09;
+  --color-brand-800: #9c3d10;
+  --color-brand-900: #7e3410;
+
+  /* Steel / graphite neutrals */
+  --color-steel-50: #f6f7f9;
+  --color-steel-100: #eceef2;
+  --color-steel-200: #d6dbe2;
+  --color-steel-300: #b2bac7;
+  --color-steel-400: #8593a5;
+  --color-steel-500: #647288;
+  --color-steel-600: #4f5b6e;
+  --color-steel-700: #414b5b;
+  --color-steel-800: #38404d;
+  --color-steel-900: #2a2f38;
+
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --surface: 244 245 247; /* concrete off-white */
+    --surface-elevated: 255 255 255;
+    --content: 14 17 22; /* graphite ink */
+    --content-muted: 79 91 110; /* steel-600 */
+    --line: 214 219 226; /* steel-200 */
+  }
+
+  .dark {
+    color-scheme: dark;
+    --surface: 13 15 18; /* near-black graphite */
+    --surface-elevated: 21 24 29;
+    --content: 245 246 248;
+    --content-muted: 133 147 165; /* steel-400 */
+    --line: 42 47 56; /* steel-900 */
+  }
+
+  * {
+    border-color: rgb(var(--line));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    background-color: rgb(var(--surface));
+    color: rgb(var(--content));
+    font-family: var(--font-sans);
+    transition: background-color 0.4s var(--ease-smooth), color 0.4s var(--ease-smooth);
+  }
+
+  #root {
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-400);
+    color: var(--color-ink);
+  }
+
+  /* Reduced-motion users: GSAP also checks this, but keep CSS calm too */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  .surface {
+    background-color: rgb(var(--surface));
+  }
+  .surface-elevated {
+    background-color: rgb(var(--surface-elevated));
+  }
+  .surface-overlay {
+    background-color: rgb(var(--surface) / 0.82);
+  }
+  .text-content {
+    color: rgb(var(--content));
+  }
+  .text-muted {
+    color: rgb(var(--content-muted));
+  }
+  .border-line {
+    border-color: rgb(var(--line));
+  }
+
+  .container-px {
+    @apply mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12;
+  }
+
+  /* Technical mono eyebrow used across the site */
+  .eyebrow {
+    @apply font-mono text-[0.7rem] uppercase tracking-[0.28em] text-brand-600 dark:text-brand-400;
+  }
+
+  /* Animated underline used on links / nav */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1.5px;
+    width: 100%;
+    background-color: var(--color-brand-500);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease-smooth);
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Blueprint grid backdrop for hero / feature sections */
+  .blueprint-grid {
+    background-image: linear-gradient(rgb(var(--content) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--content) / 0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* Hazard diagonal stripes accent */
+  .hazard-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--color-brand-500) 0,
+      var(--color-brand-500) 12px,
+      var(--color-ink) 12px,
+      var(--color-ink) 24px
+    );
+  }
+}
+
+/* Custom scrollbar for an engineered feel */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--surface));
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--content-muted) / 0.4);
+  border-radius: 9999px;
+  border: 2px solid rgb(var(--surface));
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-500);
+}
